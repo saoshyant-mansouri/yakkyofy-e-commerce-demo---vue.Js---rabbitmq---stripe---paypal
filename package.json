@@ -1,0 +1,23 @@
+{
+  "name": "yakkyofy-demo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Minimal Yakkyofy-style demo: Vue 2 SPA + Express/MongoDB API + RabbitMQ worker + multi-provider payments.",
+  "workspaces": [
+    "apps/api",
+    "apps/worker",
+    "apps/web"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "dev:api": "npm run dev -w apps/api",
+    "dev:worker": "npm run dev -w apps/worker",
+    "dev:web": "npm run dev -w apps/web",
+    "build:web": "npm run build -w apps/web",
+    "seed": "npm run seed -w apps/api",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down -v"
+  }
+}

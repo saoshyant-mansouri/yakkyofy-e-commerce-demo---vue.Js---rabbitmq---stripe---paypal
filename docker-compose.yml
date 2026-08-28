@@ -1,0 +1,64 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672" # management UI: guest/guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/yakkyofy_demo
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      - mongo
+      - rabbitmq
+    ports:
+      - "4000:4000"
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/yakkyofy_demo
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      - mongo
+      - rabbitmq
+      - api
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:4000/api}
+        VITE_STRIPE_PUBLISHABLE_KEY: ${VITE_STRIPE_PUBLISHABLE_KEY:-}
+        VITE_PAYPAL_CLIENT_ID: ${VITE_PAYPAL_CLIENT_ID:-}
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  mongo_data:
+  rabbitmq_data:
