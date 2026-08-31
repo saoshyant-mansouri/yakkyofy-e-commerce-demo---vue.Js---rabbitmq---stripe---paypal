@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+/* Design tokens lifted from mhdmansouri.com: Inter type, vibrant multi-hue
+   accent palette, generous rounding. Surface/text tokens are runtime CSS
+   variables (redefined per [data-theme]) so light/dark switches without a
+   rebuild; brand accents stay constant across both themes. */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --color-bg: var(--bg);
+  --color-chrome: var(--chrome-bg);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-ink: var(--ink);
+
+  --color-brand-orange: #ff9f1c;
+  --color-brand-orange-light: #ffbf69;
+  --color-brand-teal: #2ec4b6;
+  --color-brand-mint: #cbf3f0;
+  --color-brand-pink: #f15bb5;
+  --color-brand-purple: #9b5de5;
+  --color-brand-blue: #00bbf9;
+
+  --radius-card: 1.5rem;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #08090b;
+  --chrome-bg: #0f1114;
+  --surface: #0f1114;
+  --surface-muted: #17191d;
+  --border: #22252b;
+  --border-strong: #33373f;
+  --text: #f7f8fa;
+  --text-secondary: #c7cad1;
+  --text-muted: #8b909a;
+  --ink: #08090b;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f5f6f8;
+  --chrome-bg: #ffffff;
+  --surface: #ffffff;
+  --surface-muted: #eef0f3;
+  --border: #e2e5ea;
+  --border-strong: #c9ccd3;
+  --text: #14161a;
+  --text-secondary: #43474f;
+  --text-muted: #6b707a;
+  --ink: #08090b;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* Reusable component classes — collapses the class strings that were
+   repeated verbatim across every form/button/card in the views. Wrapped in
+   the `components` layer so plain utility classes written alongside them in
+   templates (e.g. `rounded-full` overriding `.input-field`'s `rounded-lg`)
+   still win the cascade, per Tailwind v4's layer order. */
+@layer components {
+  /* No baked-in width here on purpose: `width:100%` on a flex item with an
+     `auto` flex-basis becomes that item's flex-basis (CSS flexbox spec), so
+     any sibling using `flex-1` (basis 0%) gets starved of space fighting
+     against it. Callers add `w-full` (or their own sizing) explicitly. */
+  .input-field {
+    @apply bg-surface border border-border-strong rounded-lg px-3 py-2 text-text placeholder:text-text-muted focus-visible:outline-brand-orange;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-brand-orange text-ink font-medium hover:bg-brand-orange-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full border border-border-strong text-sm font-medium text-text hover:bg-surface-muted transition-colors disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .icon-btn {
+    @apply relative inline-flex items-center justify-center w-10 h-10 rounded-full bg-surface-muted hover:bg-border transition-colors;
+  }
+  .card {
+    @apply bg-surface border border-border rounded-card;
+  }
+  .sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text;
+  }
+  .sidebar-link.router-link-active {
+    @apply bg-brand-orange/10 text-brand-orange hover:bg-brand-orange/10 hover:text-brand-orange;
+  }
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-brand-orange);
+  color: #08090b;
+  font-weight: 600;
+  border-radius: 0 0 0.5rem 0;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-orange);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
