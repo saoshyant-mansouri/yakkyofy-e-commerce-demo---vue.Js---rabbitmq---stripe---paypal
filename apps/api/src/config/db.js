@@ -5,6 +5,8 @@ import { logger } from './logger.js';
 export async function connectDb() {
   mongoose.set('strictQuery', true);
   await mongoose.connect(env.mongoUri);
-  logger.info({ uri: env.mongoUri }, 'MongoDB connected');
+  // Host only: the URI carries the database password, which must never reach the logs.
+  const { host, name } = mongoose.connection;
+  logger.info({ host, db: name }, 'MongoDB connected');
   return mongoose.connection;
 }

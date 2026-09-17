@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { User } from '../models/index.js';
 import {
   hashPassword,
-  verifyPassword,
+  verifyPasswordOrDummy,
   signAccessToken,
   signRefreshToken,
   verifyRefreshToken,
@@ -12,6 +12,7 @@ import {
   findUserByEmailWithHash,
 } from '../services/authService.js';
 import { requireAuth } from '../middleware/auth.js';
+import { logger } from '../config/logger.js';
 
 export const authRouter = Router();
 
@@ -20,6 +21,18 @@ const authLimiter = rateLimit({
   limit: 20,
   standardHeaders: true,
   legacyHeaders: false,
+});
+
+// Per-account cap on failed logins. The per-IP limiter above can be sidestepped by anyone calling
+// the API host directly with a forged X-Forwarded-For, so password guessing against one account is
+// also capped by the email being tried. Successful logins don't count.
+const loginAccountLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  skipSuccessfulRequests: true,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => `login:${String(req.body?.email || '').trim().toLowerCase()}`,
 });
 
 const ACCESS_MAX_AGE = 15 * 60 * 1000;
@@ -53,19 +66,20 @@ authRouter.post('/register', authLimiter, async (req, res) => {
 
 const loginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(1),
+  password: z.string().min(1).max(128),
 });
 
-authRouter.post('/login', authLimiter, async (req, res) => {
+authRouter.post('/login', authLimiter, loginAccountLimiter, async (req, res) => {
   const parsed = loginSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: 'Invalid input' });
 
   const { email, password } = parsed.data;
   const user = await findUserByEmailWithHash(email);
-  if (!user) return res.status(401).json({ error: 'Invalid credentials' });
-
-  const valid = await verifyPassword(password, user.passwordHash);
-  if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
+  const valid = await verifyPasswordOrDummy(password, user?.passwordHash);
+  if (!valid) {
+    logger.warn({ ip: req.ip }, 'Failed login');
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
 
   setAuthCookies(res, user);
   res.json({ user });

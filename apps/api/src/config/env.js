@@ -28,6 +28,22 @@ function parseWebOrigin() {
   return list.length === 1 ? list[0] : list;
 }
 
+const DEV_SECRETS = new Set(['dev_access_secret_change_me', 'dev_refresh_secret_change_me']);
+
+// Production must not boot on the dev fallbacks (anyone could forge a session with them), on short
+// secrets, or on one secret for both token types (a refresh token would then pass as an access token).
+function assertProdSecrets({ accessSecret, refreshSecret }) {
+  if (process.env.NODE_ENV !== 'production') return;
+  for (const [name, value] of [['JWT_ACCESS_SECRET', accessSecret], ['JWT_REFRESH_SECRET', refreshSecret]]) {
+    if (DEV_SECRETS.has(value) || value.length < 32) {
+      throw new Error(`${name} must be set to a random value of at least 32 characters in production`);
+    }
+  }
+  if (accessSecret === refreshSecret) {
+    throw new Error('JWT_ACCESS_SECRET and JWT_REFRESH_SECRET must differ');
+  }
+}
+
 export const env = {
   nodeEnv: process.env.NODE_ENV || 'development',
   isProd: process.env.NODE_ENV === 'production',
@@ -63,3 +79,5 @@ export const env = {
     apiUrl: process.env.FX_API_URL || '',
   },
 };
+
+assertProdSecrets(env.jwt);

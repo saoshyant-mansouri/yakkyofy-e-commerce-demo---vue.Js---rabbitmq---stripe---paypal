@@ -88,6 +88,11 @@ import { mapActions } from 'vuex';
 import Spinner from '../components/Spinner.vue';
 import ApiStatusNotice from '../components/ApiStatusNotice.vue';
 
+// Only same-app paths: "/orders" yes, "//evil.example" or "https://…" no.
+function safeRedirect(target) {
+  return typeof target === 'string' && /^\/(?![\/\\])/.test(target) ? target : '/dashboard';
+}
+
 export default {
   name: 'LoginView',
   components: { Spinner, ApiStatusNotice },
@@ -105,7 +110,7 @@ export default {
       this.error = '';
       try {
         await this.login({ email: this.email, password: this.password });
-        this.$router.push(this.$route.query.redirect || '/dashboard');
+        this.$router.push(safeRedirect(this.$route.query.redirect));
       } catch (err) {
         this.error = err.response?.data?.error || this.$t('common.error');
       } finally {

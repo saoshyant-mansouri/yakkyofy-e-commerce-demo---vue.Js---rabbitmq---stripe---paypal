@@ -12,4 +12,6 @@ COPY apps/api apps/api
 
 WORKDIR /repo/apps/api
 EXPOSE 4000
+# Run as the unprivileged user the node image ships with, not root.
+USER node
 CMD ["node", "src/server.js"]

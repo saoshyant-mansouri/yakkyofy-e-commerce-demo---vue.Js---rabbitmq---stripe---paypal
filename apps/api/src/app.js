@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import rateLimit from 'express-rate-limit';
 import pinoHttp from 'pino-http';
 import { env } from './config/env.js';
 import { logger } from './config/logger.js';
@@ -17,11 +18,21 @@ import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
 export function createApp() {
   const app = express();
 
+  // Browser -> Vercel (rewrite proxy) -> Azure Container Apps ingress -> this process. Trusting
+  // those two hops makes req.ip the real client, so per-IP rate limits apply per visitor. Before,
+  // every request appeared to come from the ingress, so all visitors shared one login bucket and
+  // anyone could lock everyone out.
+  app.set('trust proxy', 2);
+
   app.use(helmet());
   // Explicit origin allowlist (not '*') so cookies can be sent with
   // credentials — the direct fix for the wildcard-CORS finding on the real app.
   app.use(cors({ origin: env.webOrigin, credentials: true }));
   app.use(pinoHttp({ logger }));
+  app.use(
+    '/api',
+    rateLimit({ windowMs: 60 * 1000, limit: 300, standardHeaders: true, legacyHeaders: false })
+  );
 
   // Stripe webhook needs the raw body for signature verification, so it's
   // mounted with express.raw() before the global json() parser applies to

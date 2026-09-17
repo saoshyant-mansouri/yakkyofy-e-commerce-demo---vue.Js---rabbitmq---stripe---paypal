@@ -16,9 +16,10 @@
         { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), usb=()" },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'sha256-TJc3QibryFcmfvyLo1CjsxL9Fr4hm/rpMtyyfjfaCjo=' https://js.stripe.com https://www.paypal.com https://www.paypalobjects.com; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://api.stripe.com https://*.paypal.com https://*.mangopay.com; frame-src https://js.stripe.com https://www.paypal.com;"
+          "value": "default-src 'self'; script-src 'self' 'sha256-TJc3QibryFcmfvyLo1CjsxL9Fr4hm/rpMtyyfjfaCjo=' https://js.stripe.com https://www.paypal.com https://www.paypalobjects.com; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://api.stripe.com https://*.paypal.com https://*.mangopay.com; frame-src https://js.stripe.com https://www.paypal.com; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self';"
         }
       ]
     },

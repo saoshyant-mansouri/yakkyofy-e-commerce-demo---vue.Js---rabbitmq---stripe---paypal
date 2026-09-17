@@ -21,14 +21,18 @@ webhooksRouter.post('/stripe', async (req, res) => {
   if (event.type === 'payment_intent.succeeded') {
     const intent = event.data.object;
     const orderId = intent.metadata?.orderId;
-    if (orderId) {
-      const order = await Order.findById(orderId);
-      if (order && order.status === 'pending') {
-        order.status = 'processing';
-        order.events.push({ status: 'processing', message: 'Stripe webhook: payment succeeded' });
-        await order.save();
-        await publishOrderCreated(order);
-      }
+    if (orderId && /^[0-9a-fA-F]{24}$/.test(orderId)) {
+      // Atomic pending -> processing, matched on this exact intent, so the webhook and the client's
+      // /checkout/stripe/confirm can't both publish the order.
+      const order = await Order.findOneAndUpdate(
+        { _id: orderId, status: 'pending', provider: 'stripe', providerRef: intent.id, amountMinor: intent.amount },
+        {
+          $set: { status: 'processing' },
+          $push: { events: { status: 'processing', message: 'Stripe webhook: payment succeeded' } },
+        },
+        { new: true }
+      );
+      if (order) await publishOrderCreated(order);
     }
   }
 

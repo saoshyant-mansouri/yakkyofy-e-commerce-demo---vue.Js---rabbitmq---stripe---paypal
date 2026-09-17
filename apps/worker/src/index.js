@@ -31,15 +31,17 @@ async function handleProcess(channel, msg) {
     return channel.ack(msg);
   }
 
+  // Each decrement only applies if enough stock remains at that instant, so two orders processed
+  // concurrently can't both take the last unit. On a shortfall, already-reserved lines are put back.
+  const reserved = [];
   try {
     for (const item of order.items) {
-      const product = await Product.findById(item.product);
-      if (!product || product.stock < item.qty) {
-        throw new Error(`Insufficient stock for ${item.title}`);
-      }
-    }
-    for (const item of order.items) {
-      await Product.findByIdAndUpdate(item.product, { $inc: { stock: -item.qty } });
+      const updated = await Product.findOneAndUpdate(
+        { _id: item.product, stock: { $gte: item.qty } },
+        { $inc: { stock: -item.qty } }
+      );
+      if (!updated) throw new Error(`Insufficient stock for ${item.title}`);
+      reserved.push(item);
     }
 
     order.status = 'paid';
@@ -56,6 +58,9 @@ async function handleProcess(channel, msg) {
     channel.ack(msg);
   } catch (err) {
     logger.error({ err, orderId }, 'order.process failed');
+    for (const item of reserved) {
+      await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.qty } });
+    }
     order.status = 'failed';
     order.events.push({ status: 'failed', message: err.message });
     await order.save();

@@ -25,12 +25,28 @@ export function signRefreshToken(user) {
   });
 }
 
+const VERIFY_OPTIONS = { algorithms: ['HS256'] };
+
 export function verifyAccessToken(token) {
-  return jwt.verify(token, env.jwt.accessSecret);
+  const payload = jwt.verify(token, env.jwt.accessSecret, VERIFY_OPTIONS);
+  if (payload.type === 'refresh') throw new Error('Refresh token used as access token');
+  return payload;
 }
 
 export function verifyRefreshToken(token) {
-  return jwt.verify(token, env.jwt.refreshSecret);
+  const payload = jwt.verify(token, env.jwt.refreshSecret, VERIFY_OPTIONS);
+  if (payload.type !== 'refresh') throw new Error('Not a refresh token');
+  return payload;
+}
+
+// A real bcrypt hash (cost 12) of a random string, compared against when the email doesn't exist,
+// so a login for an unknown account takes as long as one with a wrong password and response time
+// doesn't reveal which emails are registered.
+const DUMMY_HASH = '$2b$12$pjyrjRjw8kOE6L2oaXeHO.XcdzomaTGfBnoYlUsbP.953fFPZImbq';
+
+export async function verifyPasswordOrDummy(plain, hash) {
+  const ok = await bcrypt.compare(plain, hash || DUMMY_HASH);
+  return Boolean(hash) && ok;
 }
 
 // Cookies are HttpOnly (+ Secure in prod) so no client-side JS can ever read

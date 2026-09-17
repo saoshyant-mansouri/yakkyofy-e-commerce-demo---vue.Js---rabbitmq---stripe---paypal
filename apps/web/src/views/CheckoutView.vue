@@ -128,8 +128,6 @@ export default {
           orderId: this.session.orderId,
           registrationId,
           registrationData,
-          mpUserId: this.session.mpUserId,
-          walletId: this.session.walletId,
         });
         this.goToOrder(order);
       } catch {

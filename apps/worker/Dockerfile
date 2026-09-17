@@ -12,4 +12,6 @@ COPY apps/api apps/api
 COPY apps/worker apps/worker
 
 WORKDIR /repo/apps/worker
+# Run as the unprivileged user the node image ships with, not root.
+USER node
 CMD ["node", "src/index.js"]
