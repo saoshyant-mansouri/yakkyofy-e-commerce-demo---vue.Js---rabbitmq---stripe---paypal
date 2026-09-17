@@ -3,6 +3,7 @@
     class="relative flex items-center justify-center overflow-hidden"
     :style="{ background: gradient }"
   >
+    <!-- The icon tile is the placeholder while the photo loads, and the fallback if it can't. -->
     <svg
       class="w-[42%] h-[42%] text-white/90"
       viewBox="0 0 24 24"
@@ -15,14 +16,32 @@
     >
       <g v-html="ICONS[icon] || ICONS.box" />
     </svg>
+    <img
+      v-if="photo && !failed"
+      :src="photo.src"
+      :srcset="photo.srcset"
+      :sizes="sizes"
+      :alt="alt"
+      width="400"
+      height="400"
+      :loading="eager ? 'eager' : 'lazy'"
+      :fetchpriority="eager ? 'high' : 'auto'"
+      decoding="async"
+      class="product-photo absolute inset-0 w-full h-full object-cover"
+      :class="loaded && 'is-loaded'"
+      @load="loaded = true"
+      @error="failed = true"
+    />
   </div>
 </template>
 
 <script>
+import { productPhotoSources } from './productPhotos';
+
 // A small, hand-drawn icon set (Heroicons-outline style, matching the rest
-// of the app's inline SVGs) mapped per product — used instead of stock
-// photos so every product's visual actually matches what it is, with zero
-// external image dependency.
+// of the app's inline SVGs) mapped per product. It paints instantly as the
+// placeholder under the product photo, and stays as the fallback when a
+// product has no photo or the photo fails to load.
 const ICONS = {
   headphones:
     '<path d="M4 13v-1a8 8 0 0116 0v1"/><rect x="3" y="13" width="4" height="7" rx="1.5"/><rect x="17" y="13" width="4" height="7" rx="1.5"/>',
@@ -80,14 +99,32 @@ export default {
   props: {
     icon: { type: String, required: true },
     category: { type: String, default: '' },
+    // The product itself (slug/images/title), used to find its photo.
+    product: { type: Object, default: null },
+    // Rendered width hint for srcset; the default fits the 2/3/4-column catalogue grid.
+    sizes: { type: String, default: '(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw' },
+    // Above-the-fold images (the product detail hero) skip lazy loading.
+    eager: { type: Boolean, default: false },
   },
   data() {
-    return { ICONS };
+    return { ICONS, loaded: false, failed: false };
   },
   computed: {
+    photo() {
+      return productPhotoSources(this.product);
+    },
+    alt() {
+      return this.product?.title || '';
+    },
     gradient() {
       const key = CATEGORY_GRADIENTS[this.category] || CATEGORY_GRADIENTS.default;
       return `linear-gradient(135deg, ${key[0]}, ${key[1]})`;
+    },
+  },
+  watch: {
+    photo() {
+      this.loaded = false;
+      this.failed = false;
     },
   },
 };
@@ -102,3 +139,17 @@ const CATEGORY_GRADIENTS = {
   default: ['#33373f', '#17191d'],
 };
 </script>
+
+<style scoped>
+/* Fade the photo in over the icon placeholder once decoded, instead of it popping in line by line. */
+.product-photo {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.product-photo.is-loaded {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .product-photo { transition: none; }
+}
+</style>

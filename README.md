@@ -125,13 +125,24 @@ For a single-server "Heroku-style" alternative, the same Dockerfiles work under 
 Dokku app per service (`api`, `worker`, `web`) and push each `apps/<service>` directory, or use
 Dokku's `dokku git:from-image` / multi-Dockerfile support against this monorepo.
 
+## Deploying to Azure + Vercel (Terraform, no/low-cost)
+
+`infra/` has a full Terraform config tuned to run at effectively $0/month: the Vue SPA on
+**Vercel**, the API/worker on Azure Container Apps (scale-to-zero), MongoDB Atlas's free M0 tier,
+and CloudAMQP's free RabbitMQ-compatible plan instead of a self-hosted broker. See
+**[infra/README.md](infra/README.md)** for the full walkthrough — `terraform apply` provisions the
+Azure/Atlas/CloudAMQP infrastructure, `infra/deploy.sh` builds/ships the api and worker images and
+then runs `vercel deploy` for the frontend (in that order, since Vite bakes the API's URL into the
+frontend bundle at build time, which only exists once the API is provisioned).
+
 ## Security posture (fixes applied vs. the real-world app this is modeled on)
 
 An earlier reverse-engineering review of the real Yakkyofy app found three chained issues. This
 demo deliberately does the opposite in each case:
 
-- **Auth cookies are `HttpOnly` + `SameSite=Lax` (+ `Secure` in prod)** — no client-side JS can
-  read the session token, unlike the real app's `js-cookie`-readable tokens.
+- **Auth cookies are `HttpOnly`** (+ `Secure` and `SameSite=None` in prod, `SameSite=Lax` in local
+  dev where API and web share a site) — no client-side JS can ever read the session token, unlike
+  the real app's `js-cookie`-readable tokens.
 - **CORS is an explicit origin allowlist** (`cors({ origin: env.webOrigin, credentials: true })`),
   not a wildcard.
 - **`passwordHash` uses Mongoose `select: false`** and a `toJSON` transform strips it and the

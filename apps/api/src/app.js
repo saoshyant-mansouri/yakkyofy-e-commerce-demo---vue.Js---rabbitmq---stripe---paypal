@@ -32,6 +32,12 @@ export function createApp() {
   app.use(cookieParser());
 
   app.get('/health', (req, res) => res.json({ status: 'ok' }));
+  // Under /api (unlike /health) so the frontend can reach it through the
+  // same-origin Vercel proxy — see apps/web/src/main.js. Does no DB/service
+  // work, just confirms the process is up, so it's the cheapest possible
+  // way to trigger a cold container awake while the user is still reading
+  // the landing page, before they've clicked anything that actually needs data.
+  app.get('/api/ping', (req, res) => res.json({ status: 'ok' }));
 
   app.use('/api/auth', authRouter);
   app.use('/api/products', productsRouter);

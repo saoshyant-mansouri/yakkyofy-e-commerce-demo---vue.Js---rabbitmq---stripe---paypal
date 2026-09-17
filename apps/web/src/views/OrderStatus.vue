@@ -1,6 +1,5 @@
 <template>
-  <div class="max-w-lg mx-auto">
-    <h1 class="text-2xl font-semibold mb-4">{{ $t('checkout.orderStatus') }}</h1>
+  <div class="card max-w-lg p-6">
     <div v-if="loading" class="flex flex-col gap-4" role="status" aria-busy="true" :aria-label="$t('common.loading')">
       <div class="flex items-center justify-between">
         <div class="h-4 w-24 rounded-full animate-pulse bg-surface-muted" />
@@ -72,7 +71,8 @@ export default {
       // order in place so the timeline doesn't flash blank every 2 seconds.
       if (!this.order) this.loading = true;
       try {
-        this.order = await this.fetchOrder(this.id);
+        // Poll refreshes are silent so the top progress bar doesn't pulse every 2 seconds.
+        this.order = await this.fetchOrder({ id: this.id, silent: Boolean(this.order) });
       } finally {
         this.loading = false;
       }

@@ -3,10 +3,9 @@ import { logger } from '../config/logger.js';
 import { Product, User } from '../models/index.js';
 import { hashPassword } from '../services/authService.js';
 
-// Hand-curated catalogue — each product's `icon` (rendered by the frontend's
-// ProductImageTile) is chosen to actually match the product, unlike the
-// earlier random-photo generator where the image and the title were
-// unrelated. Prices are integer EUR cents (basePriceMinor).
+// Hand-curated catalogue. Each product has a hand-checked photo served by the
+// web app from public/products/<slug-without-index>-{400,800}.webp, and an
+// `icon` the frontend's ProductImageTile shows as placeholder/fallback. Prices are integer EUR cents (basePriceMinor).
 const PRODUCTS = [
   // --- Electronics ---
   {
@@ -428,7 +427,7 @@ function buildProducts() {
     slug: `${slugify(p.title)}-${i + 1}`,
     description: p.description,
     icon: p.icon,
-    images: [],
+    images: [`/products/${slugify(p.title)}-800.webp`],
     category: p.category,
     basePriceMinor: p.price,
     baseCurrency: 'EUR',

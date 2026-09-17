@@ -8,9 +8,8 @@ const productSchema = new Schema(
     slug: { type: String, required: true, unique: true, index: true },
     description: { type: String, required: true },
     images: { type: [String], default: [] },
-    // Key into the frontend's ProductImageTile icon set — used instead of
-    // stock photos so the product's visual always matches what it actually
-    // is, rather than a randomly-assigned unrelated image.
+    // Key into the frontend's ProductImageTile icon set — the placeholder
+    // while `images` loads, and the fallback when a product has no photo.
     icon: { type: String, required: true },
     category: { type: String, required: true, index: true },
     // Base price stored as integer minor units (cents) in EUR, converted

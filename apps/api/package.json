@@ -15,7 +15,8 @@
   "scripts": {
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
-    "seed": "node src/scripts/seed.js"
+    "seed": "node src/scripts/seed.js",
+    "backfill:images": "node src/scripts/backfillProductImages.js"
   },
   "dependencies": {
     "amqplib": "2.0.1",

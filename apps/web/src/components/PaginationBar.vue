@@ -20,11 +20,11 @@
         v-else
         :key="p"
         type="button"
-        class="min-w-10 h-10 px-2 rounded-full text-sm font-medium transition-colors"
+        class="min-w-10 h-10 px-2 rounded-lg text-sm font-medium transition-colors"
         :class="
           p === page
             ? 'bg-brand-orange text-ink'
-            : 'text-text hover:bg-surface-muted border border-transparent'
+            : 'text-text hover:bg-surface border border-transparent'
         "
         :aria-current="p === page ? 'page' : null"
         :aria-label="$t('common.page', { page: p, total: totalPages })"

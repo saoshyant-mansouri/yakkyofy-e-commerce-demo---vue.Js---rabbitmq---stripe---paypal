@@ -23,10 +23,13 @@
       </div>
     </div>
     <div v-else-if="!product" class="text-text-muted">Product not found.</div>
-    <div v-else class="grid md:grid-cols-2 gap-8">
+    <div v-else class="card p-6 grid md:grid-cols-2 gap-8">
       <ProductImageTile
         :icon="product.icon"
         :category="product.category"
+        :product="product"
+        sizes="(min-width: 768px) 40vw, 100vw"
+        eager
         class="w-full rounded-card aspect-square"
       />
       <div class="flex flex-col gap-4">

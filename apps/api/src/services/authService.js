@@ -33,9 +33,20 @@ export function verifyRefreshToken(token) {
   return jwt.verify(token, env.jwt.refreshSecret);
 }
 
-// Cookies are HttpOnly + SameSite=Lax (+ Secure in prod) so no client-side JS
-// can ever read the token — this is the direct fix for the real Yakkyofy
-// weakness (js-cookie-readable tokens) found during the earlier security review.
+// Cookies are HttpOnly (+ Secure in prod) so no client-side JS can ever read
+// the token — this is the direct fix for the real Yakkyofy weakness
+// (js-cookie-readable tokens) found during the earlier security review.
+//
+// Lax works in both dev and prod because the browser only ever talks to one
+// origin either way: in dev the API and SPA share a host, and in prod the
+// Vercel frontend proxies /api/* to the Azure API server-side (see
+// vercel.json), so from the browser's perspective every request is
+// same-origin. An earlier version set SameSite=None in prod to survive a
+// direct cross-origin XHR to the Azure host — that broke in any browser
+// blocking third-party cookies (Chrome's default third-party cookie
+// blocking), since a None cookie set during login was silently dropped on
+// every subsequent request. Routing through the same-origin proxy instead
+// of loosening SameSite avoids that class of bug entirely.
 export function cookieOptions(maxAgeMs) {
   return {
     httpOnly: true,

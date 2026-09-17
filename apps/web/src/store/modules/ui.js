@@ -1,13 +1,24 @@
 const THEME_KEY = 'yakkyofy-demo-theme';
 
 function getInitialTheme() {
+  let theme;
   try {
     const stored = window.localStorage.getItem(THEME_KEY);
-    if (stored === 'light' || stored === 'dark') return stored;
-    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    theme = stored === 'light' || stored === 'dark'
+      ? stored
+      : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   } catch {
-    return 'dark';
+    theme = 'light';
   }
+  // SET_THEME normally applies data-theme to <html>, but that mutation only
+  // runs when the user actively toggles. Without this, every [data-theme]
+  // CSS variable (surface/text/border colors) is undefined on first load —
+  // most elements coincidentally still look right off the browser's default
+  // black-text fallback, but anything relying on a *specific* themed value
+  // (e.g. white text on an always-dark diagram node) silently renders
+  // invisible until the user happens to toggle the theme once.
+  document.documentElement.setAttribute('data-theme', theme);
+  return theme;
 }
 
 export default {

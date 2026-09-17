@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import { store } from '../store';
+import { setNavigating } from '../boot/progress';
 
 Vue.use(VueRouter);
 
@@ -18,42 +19,48 @@ const routes = [
     meta: { layout: 'public' },
   },
   {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import('../views/DashboardView.vue'),
+    meta: { requiresAuth: true, title: 'Dashboard' },
+  },
+  {
     path: '/products',
     name: 'products',
     component: () => import('../views/ProductList.vue'),
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: 'Products' },
   },
   {
     path: '/products/:idOrSlug',
     name: 'product-detail',
     component: () => import('../views/ProductDetail.vue'),
     props: true,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: 'Product', parent: 'products', hideTitle: true },
   },
   {
     path: '/cart',
     name: 'cart',
     component: () => import('../views/CartView.vue'),
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: 'Cart' },
   },
   {
     path: '/checkout',
     name: 'checkout',
     component: () => import('../views/CheckoutView.vue'),
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: 'Checkout', parent: 'cart' },
   },
   {
     path: '/orders',
     name: 'orders',
     component: () => import('../views/OrdersList.vue'),
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: 'Orders' },
   },
   {
     path: '/orders/:id',
     name: 'order-status',
     component: () => import('../views/OrderStatus.vue'),
     props: true,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: 'Order status', parent: 'orders' },
   },
   {
     path: '/login',
@@ -72,6 +79,7 @@ const routes = [
     path: '*',
     name: 'not-found',
     component: () => import('../views/NotFound.vue'),
+    meta: { title: 'Not found' },
   },
 ];
 
@@ -83,11 +91,39 @@ export const router = new VueRouter({
   },
 });
 
+/**
+ * Downloads a route's lazy chunk ahead of the click (sidebar links call this on hover/focus), so
+ * navigating feels instant instead of waiting on a network round-trip for the view's code.
+ */
+export function prefetchRoute(name) {
+  const route = routes.find((r) => r.name === name);
+  if (typeof route?.component === 'function') route.component().catch(() => {});
+}
+
+/** Warms the chunks a signed-in user is most likely to open next, once the browser is idle. */
+export function prefetchDashboardRoutes() {
+  const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1500));
+  idle(() => ['dashboard', 'products', 'orders', 'cart'].forEach(prefetchRoute));
+}
+
 const GUEST_ONLY_ROUTES = ['landing', 'login', 'register'];
 
 router.beforeEach(async (to, from, next) => {
+  setNavigating(true);
+  // Only signed-in pages wait on the session check. Public pages (landing, system design, login,
+  // register, 404) never touch the API, so they render immediately even while it cold-starts.
   if (!store.state.auth.initialized) {
-    await store.dispatch('auth/fetchMe');
+    if (to.meta.requiresAuth) {
+      await store.dispatch('auth/fetchMe');
+    } else {
+      store.dispatch('auth/fetchMe').then(() => {
+        const { currentRoute } = router;
+        if (store.getters['auth/isAuthenticated'] && GUEST_ONLY_ROUTES.includes(currentRoute.name)) {
+          router.replace({ name: 'dashboard' }).catch(() => {});
+        }
+      });
+      return next();
+    }
   }
   const isAuthenticated = store.getters['auth/isAuthenticated'];
 
@@ -97,7 +133,14 @@ router.beforeEach(async (to, from, next) => {
   // Signed-in users don't need the marketing/auth pages — send them straight
   // to their dashboard instead.
   if (isAuthenticated && GUEST_ONLY_ROUTES.includes(to.name)) {
-    return next({ name: 'products' });
+    return next({ name: 'dashboard' });
   }
   next();
 });
+
+router.afterEach((to) => {
+  setNavigating(false);
+  document.title = to.meta.title ? `${to.meta.title} · Yakkyofy Demo` : 'Yakkyofy Demo — Saoshyant Mansouri';
+});
+
+router.onError(() => setNavigating(false));

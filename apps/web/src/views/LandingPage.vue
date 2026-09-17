@@ -14,7 +14,7 @@
         A full-stack e-commerce platform, <span class="text-brand-orange">built to show the work.</span>
       </h1>
       <p class="mt-6 text-lg text-text-secondary max-w-2xl animate-fade-up" style="animation-delay: 140ms">
-        This is a portfolio project by <strong class="text-text">Mehdi Mansouri</strong> — a Vue storefront
+        This is a portfolio project by <strong class="text-text">Saoshyant Mansouri</strong> — a Vue storefront
         backed by Node.js, MongoDB, and a RabbitMQ order pipeline, with real Stripe and PayPal integrations
         wired against their sandbox APIs end to end. Not a mockup — an actual checkout flow.
       </p>

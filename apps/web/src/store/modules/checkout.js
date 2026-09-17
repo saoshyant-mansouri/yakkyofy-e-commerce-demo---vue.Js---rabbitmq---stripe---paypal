@@ -39,8 +39,9 @@ export default {
       const { data } = await api.post('/checkout/mangopay/pay', payload);
       return data.order;
     },
-    async fetchOrder(_ctx, orderId) {
-      const { data } = await api.get(`/orders/${orderId}`);
+    async fetchOrder(_ctx, payload) {
+      const { id, silent = false } = typeof payload === 'string' ? { id: payload } : payload;
+      const { data } = await api.get(`/orders/${id}`, { silent });
       return data.order;
     },
     async fetchOrders() {

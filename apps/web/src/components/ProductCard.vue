@@ -6,6 +6,7 @@
       <ProductImageTile
         :icon="product.icon"
         :category="product.category"
+        :product="product"
         class="w-full h-full transition-transform duration-300 group-hover:scale-105"
       />
     </router-link>
@@ -24,7 +25,7 @@
         <span class="font-semibold text-text">{{ price }}</span>
         <button
           type="button"
-          class="text-sm font-medium px-3 py-1.5 rounded-full bg-brand-orange text-ink hover:bg-brand-orange-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-1.5"
+          class="text-sm font-semibold px-3 py-1.5 rounded-lg bg-brand-orange text-ink hover:bg-brand-orange-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-1.5"
           :disabled="adding"
           @click="handleAdd"
         >

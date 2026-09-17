@@ -1,9 +1,8 @@
 <template>
   <div>
-    <h1 class="text-2xl font-semibold mb-6">{{ $t('nav.orders') }}</h1>
     <ul
       v-if="loading"
-      class="flex flex-col divide-y divide-border border border-border rounded-card overflow-hidden"
+      class="card flex flex-col divide-y divide-border overflow-hidden"
       role="status"
       aria-busy="true"
       :aria-label="$t('common.loading')"
@@ -19,8 +18,8 @@
         </div>
       </li>
     </ul>
-    <p v-else-if="orders.length === 0" class="text-text-muted">No orders yet.</p>
-    <ul v-else class="flex flex-col divide-y divide-border border border-border rounded-card overflow-hidden">
+    <p v-else-if="orders.length === 0" class="card p-6 text-text-muted">No orders yet.</p>
+    <ul v-else class="card flex flex-col divide-y divide-border overflow-hidden">
       <li v-for="order in orders" :key="order._id">
         <router-link
           :to="`/orders/${order._id}`"

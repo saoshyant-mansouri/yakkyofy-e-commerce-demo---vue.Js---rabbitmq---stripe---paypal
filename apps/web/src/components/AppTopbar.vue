@@ -1,8 +1,8 @@
 <template>
-  <header class="sticky top-0 z-20 h-16 flex items-center gap-2 sm:gap-3 border-b border-border bg-chrome/90 backdrop-blur px-4 sm:px-6 lg:px-8">
+  <header class="sticky top-0 z-20 h-[70px] shrink-0 flex items-center gap-2 sm:gap-3 bg-canvas/60 backdrop-blur-md px-4 sm:px-6 lg:rounded-tl-[45px]">
     <button
       type="button"
-      class="lg:hidden icon-btn"
+      class="lg:hidden icon-btn -ml-2"
       :aria-label="$t('nav.openMenu')"
       @click="openSidebar"
     >
@@ -11,13 +11,32 @@
       </svg>
     </button>
 
+    <nav aria-label="Breadcrumb" class="min-w-0 hidden sm:block">
+      <ol class="flex items-center gap-2 text-sm text-text-muted">
+        <li>
+          <router-link to="/dashboard" class="flex hover:text-brand-orange" aria-label="Dashboard">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 3.2l9 7V21h-6.5v-6h-5v6H3V10.2l9-7z" />
+            </svg>
+          </router-link>
+        </li>
+        <li v-for="crumb in breadcrumbs" :key="crumb.label" class="flex items-center gap-2 min-w-0">
+          <span aria-hidden="true">&gt;</span>
+          <router-link v-if="crumb.to" :to="crumb.to" class="truncate hover:text-brand-orange">{{ crumb.label }}</router-link>
+          <span v-else class="truncate text-text-secondary" aria-current="page">{{ crumb.label }}</span>
+        </li>
+      </ol>
+    </nav>
+
     <div class="flex-1" />
+
+    <ApiStatusPill compact />
 
     <label class="sr-only" for="currency-select">Currency</label>
     <select
       id="currency-select"
       :value="currentCurrency"
-      class="bg-surface-muted border border-border-strong rounded-full text-sm px-3 py-1.5 text-text focus-visible:outline-brand-orange"
+      class="h-10 bg-surface rounded-card text-sm font-medium px-3 text-text border border-transparent hover:border-border-strong focus-visible:border-brand-orange cursor-pointer"
       @change="onCurrencyChange"
     >
       <option v-for="c in supportedCurrencies" :key="c" :value="c">{{ c }}</option>
@@ -43,7 +62,7 @@
       class="icon-btn"
       :aria-label="`${$t('nav.cart')} (${itemCount})`"
     >
-      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+      <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -52,21 +71,41 @@
       </svg>
       <span
         v-if="itemCount > 0"
-        class="absolute -top-1 -right-1 bg-brand-orange text-ink text-[11px] font-bold rounded-full w-5 h-5 flex items-center justify-center"
+        class="absolute -top-0.5 -right-0.5 bg-brand-orange text-ink text-[11px] font-bold rounded-full min-w-5 h-5 px-1 flex items-center justify-center"
       >
         {{ itemCount }}
       </span>
     </router-link>
 
-    <button
-      v-if="isAuthenticated"
-      type="button"
-      class="hidden sm:inline-flex btn-outline"
-      @click="handleLogout"
-    >
-      {{ $t('nav.logout') }}
-    </button>
-    <router-link v-else to="/login" class="btn-primary !px-4 !py-1.5 text-sm">
+    <div v-if="isAuthenticated" ref="menu" class="relative">
+      <button
+        type="button"
+        class="grid place-items-center w-11 h-11 rounded-full border-2 border-brand-orange text-brand-orange text-sm font-semibold transition-colors hover:bg-accent"
+        :aria-expanded="String(menuOpen)"
+        aria-haspopup="menu"
+        :aria-label="`Account menu for ${user.name}`"
+        @click="menuOpen = !menuOpen"
+      >
+        {{ initials }}
+      </button>
+      <div
+        v-if="menuOpen"
+        role="menu"
+        class="absolute right-0 top-full mt-2 w-60 rounded-card bg-surface border border-border shadow-[0_2px_12px_rgb(0_0_0/10%)] py-2"
+      >
+        <div class="px-4 py-2 border-b border-border mb-1">
+          <p class="text-sm font-semibold text-text truncate">{{ user.name }}</p>
+          <p class="text-xs text-text-muted truncate">{{ user.email }}</p>
+        </div>
+        <router-link to="/orders" role="menuitem" class="block px-4 py-2 text-sm hover:bg-accent" @click.native="menuOpen = false">
+          {{ $t('nav.orders') }}
+        </router-link>
+        <button type="button" role="menuitem" class="w-full text-left px-4 py-2 text-sm hover:bg-accent" @click="handleLogout">
+          {{ $t('nav.logout') }}
+        </button>
+      </div>
+    </div>
+    <router-link v-else to="/login" class="btn-primary !px-4 !py-2 text-sm">
       {{ $t('nav.login') }}
     </router-link>
   </header>
@@ -74,14 +113,49 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
+import ApiStatusPill from './ApiStatusPill.vue';
 
 export default {
   name: 'AppTopbar',
+  components: { ApiStatusPill },
+  data() {
+    return { menuOpen: false };
+  },
   computed: {
     ...mapState('currency', { currentCurrency: 'current', supportedCurrencies: 'supported' }),
     ...mapState('ui', ['theme']),
+    ...mapState('auth', ['user']),
     ...mapGetters('auth', ['isAuthenticated']),
     ...mapGetters('cart', ['itemCount']),
+    initials() {
+      const parts = (this.user?.name || '').trim().split(/\s+/).filter(Boolean);
+      return (parts.length > 1 ? parts[0][0] + parts[parts.length - 1][0] : (parts[0] || '?').slice(0, 2)).toUpperCase();
+    },
+    breadcrumbs() {
+      const { meta } = this.$route;
+      const crumbs = [];
+      if (meta.parent) {
+        const parent = this.$router.resolve({ name: meta.parent }).route;
+        crumbs.push({ label: parent.meta.title, to: { name: meta.parent } });
+      }
+      if (meta.title && this.$route.name !== 'dashboard') crumbs.push({ label: meta.title });
+      if (this.$route.name === 'dashboard') crumbs.push({ label: 'Dashboard' });
+      return crumbs;
+    },
+  },
+  watch: {
+    $route() {
+      this.menuOpen = false;
+    },
+    menuOpen(open) {
+      const method = open ? 'addEventListener' : 'removeEventListener';
+      document[method]('pointerdown', this.onPointerDown);
+      document[method]('keydown', this.onKeydown);
+    },
+  },
+  beforeDestroy() {
+    document.removeEventListener('pointerdown', this.onPointerDown);
+    document.removeEventListener('keydown', this.onKeydown);
   },
   methods: {
     ...mapActions('auth', ['logout']),
@@ -89,12 +163,20 @@ export default {
     ...mapActions('catalog', ['fetchProducts']),
     ...mapActions('cart', ['fetchCart']),
     ...mapActions('ui', ['openSidebar', 'toggleTheme']),
+    onPointerDown(event) {
+      if (this.$refs.menu && !this.$refs.menu.contains(event.target)) this.menuOpen = false;
+    },
+    onKeydown(event) {
+      if (event.key === 'Escape') this.menuOpen = false;
+    },
     onCurrencyChange(event) {
       this.setCurrency(event.target.value);
-      this.fetchProducts({ page: 1 });
+      // Only the catalogue page shows the product list; refetching it elsewhere was a wasted request.
+      if (this.$route.name === 'products') this.fetchProducts({ page: 1 });
       if (this.isAuthenticated) this.fetchCart();
     },
     async handleLogout() {
+      this.menuOpen = false;
       await this.logout();
       this.$router.push({ name: 'landing' });
     },

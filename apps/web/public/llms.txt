@@ -1,0 +1,28 @@
+# Yakkyofy Demo
+
+> A full-stack e-commerce portfolio project by Saoshyant Mansouri — a Vue storefront backed by
+> Node.js, MongoDB, and a RabbitMQ order pipeline, with real Stripe and PayPal integrations
+> running against their sandbox APIs. The architecture is modeled after Yakkyofy, an
+> e-commerce sourcing platform.
+
+This is a demonstration application, not a production store. Mock product catalogue,
+sandbox-only payments, no real transactions. It exists to show a complete, working checkout
+flow — authentication, a real product catalogue, cart and order state, and two payment
+providers integrated end to end — rather than a static mockup.
+
+## Author
+
+- [Saoshyant Mansouri](https://www.mhdmansouri.com/): the author of this project. Full-stack
+  engineer; see the site for other work.
+
+## Pages
+
+- [Home](/): project overview and links.
+- [System design](/system-design): architecture diagram, database schema, and API reference
+  for this application.
+
+## Stack
+
+Vue 2.7, Vuex, Vue Router, Vite, Tailwind CSS, GSAP — Node.js, Express, MongoDB (Mongoose),
+RabbitMQ (amqplib) — Stripe, PayPal REST API — deployed on Vercel (frontend) and Azure
+Container Apps (API/worker), MongoDB Atlas, and CloudAMQP.

@@ -1,4 +1,4 @@
-import { api } from '../../api/client';
+import { api, dedupedGet } from '../../api/client';
 
 export default {
   namespaced: true,
@@ -17,7 +17,8 @@ export default {
   actions: {
     async fetchMe({ commit }) {
       try {
-        const { data } = await api.get('/auth/me');
+        // Deduped: the route guard and a layout can both ask on first load.
+        const { data } = await dedupedGet('/auth/me');
         commit('SET_USER', data.user);
       } catch {
         commit('SET_USER', null);

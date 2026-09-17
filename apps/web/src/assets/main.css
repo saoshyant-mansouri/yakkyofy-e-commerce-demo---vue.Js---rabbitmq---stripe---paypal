@@ -1,11 +1,15 @@
 @import "tailwindcss";
 
-/* Design tokens lifted from mhdmansouri.com: Inter type, vibrant multi-hue
-   accent palette, generous rounding. Surface/text tokens are runtime CSS
-   variables (redefined per [data-theme]) so light/dark switches without a
-   rebuild; brand accents stay constant across both themes. */
+/* Design tokens modelled on the real Yakkyofy seller dashboard
+   (app.yakkyofy.com, measured from its computed styles): Plus Jakarta Sans,
+   a near-white sidebar rail beside a cool-gray canvas, flat white 10px cards,
+   one saturated orange (#ff4f00) for primary actions / active nav / KPI
+   numbers, deep-navy text instead of black, and a peach pill for the active
+   nav item. Status colors follow its Element UI palette. Surface/text tokens
+   are runtime CSS variables (redefined per [data-theme]) so light/dark switch
+   without a rebuild; the dark theme keeps the same structure on navy. */
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
 
   --color-bg: var(--bg);
   --color-chrome: var(--chrome-bg);
@@ -17,44 +21,61 @@
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
   --color-ink: var(--ink);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-canvas: var(--canvas);
+  --color-navy: #162138;
 
-  --color-brand-orange: #ff9f1c;
-  --color-brand-orange-light: #ffbf69;
-  --color-brand-teal: #2ec4b6;
-  --color-brand-mint: #cbf3f0;
-  --color-brand-pink: #f15bb5;
-  --color-brand-purple: #9b5de5;
-  --color-brand-blue: #00bbf9;
+  /* Names kept from the previous palette so every view picks up the new
+     values without a rename: orange = primary, teal = success, pink = danger,
+     blue = info. */
+  --color-brand-orange: #ff4f00;
+  --color-brand-orange-light: #ff7233;
+  --color-brand-orange-dark: #e64700;
+  --color-brand-teal: #3aa757;
+  --color-brand-mint: #e7f6ea;
+  --color-brand-pink: #f56c6c;
+  --color-brand-purple: #a024d6;
+  --color-brand-blue: #409eff;
 
-  --radius-card: 1.5rem;
+  --radius-card: 10px;
+  --shadow-primary: 0 2px 12px rgb(234 75 51 / 30%);
 }
 
+/* --bg: the page behind the sidebar rail; --canvas: the rounded content area;
+   --chrome-bg: public header/panels; --ink: text on an orange fill. */
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #08090b;
-  --chrome-bg: #0f1114;
-  --surface: #0f1114;
-  --surface-muted: #17191d;
-  --border: #22252b;
-  --border-strong: #33373f;
-  --text: #f7f8fa;
-  --text-secondary: #c7cad1;
-  --text-muted: #8b909a;
-  --ink: #08090b;
+  --bg: #0b1120;
+  --canvas: #131b2e;
+  --chrome-bg: #0f1627;
+  --surface: #1a2338;
+  --surface-muted: #222c44;
+  --border: #283350;
+  --border-strong: #37435f;
+  --text: #e6e9f0;
+  --text-secondary: #b8bfcd;
+  --text-muted: #8b94a7;
+  --ink: #ffffff;
+  --accent: rgb(255 79 0 / 16%);
+  --accent-text: #ffd4c0;
 }
 
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: #f5f6f8;
+  --bg: #fcfcfc;
+  --canvas: #f0f2f5;
   --chrome-bg: #ffffff;
   --surface: #ffffff;
-  --surface-muted: #eef0f3;
-  --border: #e2e5ea;
-  --border-strong: #c9ccd3;
-  --text: #14161a;
-  --text-secondary: #43474f;
-  --text-muted: #6b707a;
-  --ink: #08090b;
+  --surface-muted: #f5f7fa;
+  --border: #e4e7ed;
+  --border-strong: #dcdfe6;
+  --text: #162138;
+  --text-secondary: #454d60;
+  --text-muted: #6b7385;
+  --ink: #ffffff;
+  --accent: #ffede6;
+  --accent-text: #162138;
 }
 
 body {
@@ -75,26 +96,44 @@ body {
      any sibling using `flex-1` (basis 0%) gets starved of space fighting
      against it. Callers add `w-full` (or their own sizing) explicitly. */
   .input-field {
-    @apply bg-surface border border-border-strong rounded-lg px-3 py-2 text-text placeholder:text-text-muted focus-visible:outline-brand-orange;
+    @apply bg-surface border border-border-strong rounded-lg px-3 py-2 text-text placeholder:text-text-muted transition-colors hover:border-text-muted focus-visible:border-brand-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange/20;
   }
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-brand-orange text-ink font-medium hover:bg-brand-orange-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-brand-orange text-ink font-semibold transition-all hover:bg-brand-orange-light hover:shadow-[var(--shadow-primary)] active:bg-brand-orange-dark disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none;
   }
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full border border-border-strong text-sm font-medium text-text hover:bg-surface-muted transition-colors disabled:opacity-40 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-border-strong bg-surface text-sm font-semibold text-text transition-colors hover:border-brand-orange hover:text-brand-orange disabled:opacity-40 disabled:cursor-not-allowed;
   }
   .icon-btn {
-    @apply relative inline-flex items-center justify-center w-10 h-10 rounded-full bg-surface-muted hover:bg-border transition-colors;
+    @apply relative inline-flex items-center justify-center w-10 h-10 rounded-full text-text transition-colors hover:bg-surface hover:text-brand-orange disabled:opacity-40 disabled:cursor-not-allowed;
   }
   .card {
-    @apply bg-surface border border-border rounded-card;
+    @apply bg-surface rounded-card;
   }
   .sidebar-link {
-    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text;
+    @apply flex items-center gap-3 h-11 px-3 rounded-card text-[15px] text-text transition-colors hover:bg-accent/60;
+  }
+  .sidebar-link svg {
+    @apply transition-transform duration-200;
+  }
+  .sidebar-link:hover svg {
+    @apply scale-110;
   }
   .sidebar-link.router-link-active {
-    @apply bg-brand-orange/10 text-brand-orange hover:bg-brand-orange/10 hover:text-brand-orange;
+    @apply bg-accent font-semibold text-accent-text hover:bg-accent;
   }
+  .page-title {
+    @apply text-[17px] font-semibold text-text;
+  }
+}
+
+/* Indeterminate top progress bar (TopProgressBar.vue). */
+@keyframes progress-indeterminate {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(250%); }
+}
+.progress-indeterminate {
+  animation: progress-indeterminate 1.1s cubic-bezier(0.65, 0.05, 0.36, 1) infinite;
 }
 
 .skip-link {
@@ -104,7 +143,7 @@ body {
   z-index: 100;
   padding: 0.75rem 1.25rem;
   background: var(--color-brand-orange);
-  color: #08090b;
+  color: #ffffff;
   font-weight: 600;
   border-radius: 0 0 0.5rem 0;
 }

@@ -1,0 +1,55 @@
+# Copy to terraform.tfvars and fill in. terraform.tfvars is gitignored —
+# never commit it.
+
+# project  = "yakkyofy-demo"
+# location = "francecentral"
+
+# If your subscription caps Container App Environments (e.g. Azure for
+# Students: 1 per subscription, not per region), point these at an existing
+# one instead of letting Terraform create a new one — see
+# container_apps_environment.tf. Find yours: `az containerapp env list -o table`.
+# If you don't have this constraint, remove container_apps_environment.tf's
+# data source and swap it back to an azurerm_container_app_environment
+# resource, and delete these two lines.
+existing_container_app_environment_name           = ""
+existing_container_app_environment_resource_group = ""
+
+# Frontend origin (Vercel) — set this to https://<your-vercel-project-name>.vercel.app.
+# Confirm the actual URL after your first `vercel deploy` and re-apply if it differs.
+web_origin = "https://yakkyofy-demo.vercel.app"
+
+# --- MongoDB Atlas ---
+# API keys: https://cloud.mongodb.com/ → Organization Access Manager → API Keys
+# (needs Project Creator or Organization Owner role to let Terraform create
+# the project itself). Org ID: Organization Settings page, top of page.
+mongodbatlas_public_key  = ""
+mongodbatlas_private_key = ""
+mongodbatlas_org_id      = ""
+# mongodbatlas_region = "EU_WEST_1"
+
+# --- CloudAMQP ---
+# Get your account API key at https://customer.cloudamqp.com/ → click your
+# account icon (top right) → "API access". This is NOT the per-instance key.
+cloudamqp_customer_api_key = ""
+# cloudamqp_region = "amazon-web-services::eu-west-1"
+
+# --- GHCR (GitHub Container Registry) ---
+# Personal Access Token (classic) with the `read:packages` scope, from
+# https://github.com/settings/tokens
+ghcr_username     = "your-github-username"
+ghcr_token        = ""
+ghcr_image_prefix = "ghcr.io/your-github-username"
+
+# --- Auth secrets: generate each with `openssl rand -hex 32` ---
+jwt_access_secret  = ""
+jwt_refresh_secret = ""
+
+# --- Stripe (test mode keys: https://dashboard.stripe.com/test/apikeys) ---
+stripe_secret_key      = ""
+stripe_webhook_secret  = ""
+stripe_publishable_key = ""
+
+# --- PayPal (sandbox app: https://developer.paypal.com/dashboard/applications/sandbox) ---
+paypal_client_id     = ""
+paypal_client_secret = ""
+# paypal_env = "sandbox"

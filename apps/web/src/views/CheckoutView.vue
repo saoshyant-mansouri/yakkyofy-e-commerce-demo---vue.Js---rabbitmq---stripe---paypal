@@ -1,6 +1,5 @@
 <template>
-  <div class="max-w-lg mx-auto">
-    <h1 class="text-2xl font-semibold mb-2">{{ $t('checkout.title') }}</h1>
+  <div class="card max-w-lg p-6">
     <p class="text-text-muted mb-6">
       {{ $t('cart.subtotal') }}: <span class="text-text font-semibold">{{ amountLabel }}</span>
     </p>

@@ -1,4 +1,7 @@
-import { api } from '../../api/client';
+import { api, dedupedGet } from '../../api/client';
+
+// Guards against out-of-order responses when the user pages or filters faster than the API answers.
+let latestProductsRequest = 0;
 
 export default {
   namespaced: true,
@@ -10,6 +13,7 @@ export default {
     total: 0,
     totalPages: 1,
     loading: false,
+    loaded: false,
     activeCategory: '',
     query: '',
   }),
@@ -20,6 +24,7 @@ export default {
       state.limit = limit;
       state.total = total;
       state.totalPages = totalPages;
+      state.loaded = true;
     },
     SET_CATEGORIES(state, categories) {
       state.categories = categories;
@@ -33,11 +38,14 @@ export default {
     },
   },
   actions: {
-    async fetchCategories({ commit }) {
-      const { data } = await api.get('/products/categories');
+    async fetchCategories({ commit, state }) {
+      // Categories don't change within a session; revisiting the catalogue shouldn't refetch them.
+      if (state.categories.length) return;
+      const { data } = await dedupedGet('/products/categories');
       commit('SET_CATEGORIES', data.categories);
     },
     async fetchProducts({ commit, state, rootState }, { page = 1 } = {}) {
+      const requestId = ++latestProductsRequest;
       commit('SET_LOADING', true);
       try {
         const { data } = await api.get('/products', {
@@ -49,9 +57,9 @@ export default {
             currency: rootState.currency.current,
           },
         });
-        commit('SET_LIST', data);
+        if (requestId === latestProductsRequest) commit('SET_LIST', data);
       } finally {
-        commit('SET_LOADING', false);
+        if (requestId === latestProductsRequest) commit('SET_LOADING', false);
       }
     },
   },

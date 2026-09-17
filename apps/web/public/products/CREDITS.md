@@ -1,0 +1,53 @@
+# Product photo credits
+
+All photos are from [Unsplash](https://unsplash.com) under the [Unsplash License](https://unsplash.com/license)
+(free to use, including commercially). Resized and converted to WebP at 400px and 800px.
+
+- `2-person-backpacking-tent` — photo by Triston Dunn: https://unsplash.com/photos/blue-and-orange-dome-tent-in-forest-during-daytime-gDElF4RMYbY
+- `4-slice-stainless-steel-toaster` — photo by Quilia: https://unsplash.com/photos/stainless-steel-bread-toaster-on-brown-wooden-table-G_GWtt1tiUs
+- `4k-ultra-hd-webcam-with-auto-focus` — photo by giuse: https://unsplash.com/photos/webcam-mounted-on-a-computer-monitor-screen-LaEOxuvzRnY
+- `6-piece-stainless-steel-knife-set` — photo by Danilo Rios: https://unsplash.com/photos/black-and-brown-handled-kitchen-knives-z9AormQ0e90
+- `65w-usb-c-gan-fast-charger` — photo by Homemade Media: https://unsplash.com/photos/white-apple-charging-adapter-on-white-table-6l5z2EPrnFc
+- `8-in-1-multi-cooker-pressure-cooker` — photo by Katherine Chase: https://unsplash.com/photos/gra-yand-black-rice-cooker-VNBUJ6imfGs
+- `adjustable-ab-wheel-roller` — photo by Hola Soy Anjo: https://unsplash.com/photos/black-and-silver-wheel-on-gray-concrete-floor-jBNRy7AozJc
+- `adjustable-dumbbell-set-2-20kg` — photo by Blend Archive: https://unsplash.com/photos/a-pair-of-dumbbells-sitting-on-top-of-a-table-vDkKAbY__v4
+- `adjustable-jump-rope-ball-bearing` — photo by Stoica Ionela: https://unsplash.com/photos/orange-skipping-rope-mPjPZmEfohI
+- `adjustable-nylon-dog-leash-1-8m` — photo by Pozva: https://unsplash.com/photos/a-red-leash-laying-on-top-of-a-wooden-floor-TDTwMuHPHp4
+- `automatic-pet-food-dispenser` — photo by Quan Jing: https://unsplash.com/photos/a-cat-eating-from-an-automatic-feeder-_aspf86QMXc
+- `bamboo-cutting-board-set-3-piece` — photo by Mockup Graphics: https://unsplash.com/photos/brown-wooden-chopping-board-on-white-background-OOv2sCKwYAA
+- `ceramic-non-stick-fry-pan-28cm` — photo by Cooker King: https://unsplash.com/photos/black-frying-pan-on-white-surface-Mv3JygH8eXQ
+- `ceramic-tourmaline-hair-straightener` — photo by Shari Sirotnak: https://unsplash.com/photos/black-corded-hair-flat-iron-beside-magazine-j1KrfvWY3H8
+- `compact-camping-stove-with-piezo-ignition` — photo by Kyle Peyton: https://unsplash.com/photos/shallow-focus-photography-of-silver-portable-stove-during-daytime-uyE5g_fdM54
+- `digital-kitchen-scale-5kg` — photo by User_Pascal: https://unsplash.com/photos/coffee-beans-are-being-weighed-on-a-digital-scale-dZAb0Km1ELY
+- `electric-kettle-1-7l-rapid-boil` — photo by Gleb Paniotov: https://unsplash.com/photos/a-black-coffee-pot-sitting-on-top-of-a-counter-JcQu6hlBUs8
+- `folding-camping-chair-with-cup-holder` — photo by Brigitta Schneiter: https://unsplash.com/photos/black-and-gray-folding-chair-on-beach-during-daytime-WG0Zo9QcHSo
+- `high-density-foam-roller` — photo by Emm Dee Singh: https://unsplash.com/photos/a-person-standing-on-a-blue-mat-with-their-feet-on-a-black-object-dQlmsho6cc8
+- `hot-swappable-mechanical-keyboard` — photo by Stefen Tan: https://unsplash.com/photos/black-and-orange-computer-keyboard-KYw1eUx1J7Y
+- `insulated-sports-water-bottle-1l` — photo by personalgraphic.com: https://unsplash.com/photos/a-white-bottle-with-a-black-cap-OUjR8lrGccs
+- `insulated-stainless-steel-water-bottle-750ml` — photo by quokkabottles: https://unsplash.com/photos/three-colorful-metal-water-bottles-6gLya_-tnP8
+- `interactive-treat-dispensing-puzzle-toy` — photo by Ayla Verschueren: https://unsplash.com/photos/a-brown-and-white-dog-eating-out-of-a-blue-and-red-toy-JVXaD3hnLvc
+- `multi-level-cat-scratching-post-tower` — photo by Madalyn Cox: https://unsplash.com/photos/black-cat-on-white-cat-tree-wahfVkDBoUc
+- `multi-tool-pocket-knife-15-in-1` — photo by Maciej Karoń: https://unsplash.com/photos/a-red-swiss-army-knife-sitting-on-top-of-a-wooden-table-XxBF57rKMOg
+- `neoprene-dumbbell-pair-2-5kg` — photo by Ray Shrewsberry: https://unsplash.com/photos/a-pair-of-pink-and-black-dumbs-on-a-blue-background-_78EPmWxz5A
+- `noise-cancelling-over-ear-headphones` — photo by Luke Peterson: https://unsplash.com/photos/black-wireless-headphones-on-white-table-lUMj2Zv5HUE
+- `orthopedic-memory-foam-pet-bed` — photo by Jamie Street: https://unsplash.com/photos/dog-resting-in-grey-dog-bed-s9Tf1eBDFqw
+- `portable-bluetooth-speaker-waterproof` — photo by Habib Dadkhah: https://unsplash.com/photos/black-and-silver-portable-speaker-S0B-pmGjdVA
+- `portable-camping-hammock-with-straps` — photo by Austin Schmid: https://unsplash.com/photos/green-hammock-YSJ7Eoz-e2M
+- `premium-yoga-mat-with-carry-strap` — photo by Tuaans: https://unsplash.com/photos/two-rolled-yoga-mats-stand-against-a-wall-YmaOkRjoBVc
+- `professional-makeup-brush-set-12-piece` — photo by Edz Norton: https://unsplash.com/photos/black-and-brown-makeup-brush-set-PEttXYw9hi8
+- `programmable-drip-coffee-maker` — photo by Ronan Furuta: https://unsplash.com/photos/white-and-black-coffeemaker-AjcABUQ7WuA
+- `rechargeable-foil-electric-shaver` — photo by Kedibone Isaac Makhumisane: https://unsplash.com/photos/a-black-electric-shaver-on-a-dark-background-Q5XSDOL2IXI
+- `rechargeable-led-headlamp` — photo by HEAD Accessories: https://unsplash.com/photos/silver-and-orange-head-lamp-9uISZprJdXU
+- `resistance-bands-set-5-levels` — photo by Kelly Sikkema: https://unsplash.com/photos/dumbbells-and-resistance-band-workout-IZOAOjvwhaM
+- `retractable-dog-leash-5m` — photo by Brock Wegner: https://unsplash.com/photos/black-french-bulldog-with-pink-leash-walking-on-the-street-during-daytime-FEo3IzsV7FA
+- `rose-quartz-facial-roller` — photo by Content Pixie: https://unsplash.com/photos/white-face-massager-j1WYUNgLbOk
+- `slicker-grooming-brush-for-short-hair` — photo by Vidak: https://unsplash.com/photos/a-small-white-dog-being-groomed-by-a-person-ol1aRLDuHK8
+- `smart-led-desk-lamp` — photo by Roger Bradshaw: https://unsplash.com/photos/silver-desk-lamp-on-white-table-0WySxD8YeNI
+- `sonic-facial-cleansing-brush` — photo by Emily Underworld: https://unsplash.com/photos/a-table-topped-with-a-bottle-of-perfume-and-a-ribbon-7SUr6ZSOV_k
+- `stainless-steel-double-pet-bowl-stand` — photo by Gayatri Malhotra: https://unsplash.com/photos/a-brown-and-white-dog-eating-out-of-a-metal-bowl-4EqIO_yxqoU
+- `travel-makeup-organizer-case` — photo by Annie Spratt: https://unsplash.com/photos/cosmetics-in-gray-bag-HqsYqMRWLiA
+- `ultrasonic-aromatherapy-diffuser` — photo by zeliang xiao: https://unsplash.com/photos/a-white-humidifier-emits-mist-on-a-wooden-desk-tqIaIls1eJY
+- `vitamin-c-brightening-face-serum` — photo by Maria Lupan: https://unsplash.com/photos/skincare-serum-bottle-and-dropper-on-a-pink-surface-BlcA2-o-7IM
+- `waterproof-dry-bag-20l` — photo by Valentin Lacoste: https://unsplash.com/photos/bikepacking-gear-on-a-rocky-beach-with-ocean-in-background-BJEP7xy3igk
+- `wireless-bluetooth-earbuds-pro` — photo by TheRegisti: https://unsplash.com/photos/black-and-blue-bluetooth-earbuds-qt9_OfTaaeY
+- `wireless-charging-stand-15w` — photo by Daniel Korpai: https://unsplash.com/photos/smartphone-on-wireless-charging-case-at-83-percent-charge-Fo1ZKpX4-f8

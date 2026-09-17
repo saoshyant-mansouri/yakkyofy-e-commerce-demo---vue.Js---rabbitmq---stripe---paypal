@@ -3,8 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0f1114" />
-    <title>Yakkyofy Demo</title>
+    <meta name="theme-color" content="#fcfcfc" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b1120" media="(prefers-color-scheme: dark)" />
+    <title>Yakkyofy Demo — Saoshyant Mansouri</title>
+    <meta
+      name="description"
+      content="A full-stack e-commerce demo by Saoshyant Mansouri: Vue, Node.js, MongoDB, and RabbitMQ, with real Stripe and PayPal sandbox integrations. Architecture inspired by Yakkyofy."
+    />
+    <meta name="author" content="Saoshyant Mansouri" />
+    <link rel="author" href="https://www.mhdmansouri.com/" />
+    <link rel="canonical" href="https://yakkyofy-demo.vercel.app/" />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Yakkyofy Demo" />
+    <meta property="og:title" content="Yakkyofy Demo — a portfolio e-commerce platform by Saoshyant Mansouri" />
+    <meta
+      property="og:description"
+      content="A full-stack e-commerce demo: Vue, Node.js, MongoDB, and RabbitMQ, with real Stripe and PayPal sandbox integrations. Architecture inspired by Yakkyofy."
+    />
+    <meta property="og:url" content="https://yakkyofy-demo.vercel.app/" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Yakkyofy Demo — a portfolio e-commerce platform by Saoshyant Mansouri" />
+    <meta
+      name="twitter:description"
+      content="A full-stack e-commerce demo: Vue, Node.js, MongoDB, and RabbitMQ, with real Stripe and PayPal sandbox integrations."
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Yakkyofy Demo",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "description": "A full-stack e-commerce demo — Vue, Node.js, MongoDB, and RabbitMQ, with real Stripe and PayPal sandbox integrations. Architecture inspired by Yakkyofy.",
+        "url": "https://yakkyofy-demo.vercel.app/",
+        "author": {
+          "@type": "Person",
+          "name": "Saoshyant Mansouri",
+          "url": "https://www.mhdmansouri.com/"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    </script>
+    <!-- Allowed by the CSP via its sha256 hash (vercel.json, nginx.conf). Any edit to this
+         script, even whitespace, changes the hash: update both CSPs, or it will be blocked. -->
     <script>
       // Sets data-theme before first paint so there's no flash of the wrong
       // theme. Mirrors the read logic in store/modules/ui.js exactly.
@@ -15,12 +63,12 @@
           var theme =
             stored === 'light' || stored === 'dark'
               ? stored
-              : window.matchMedia('(prefers-color-scheme: light)').matches
-                ? 'light'
-                : 'dark';
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
           document.documentElement.setAttribute('data-theme', theme);
         } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'dark');
+          document.documentElement.setAttribute('data-theme', 'light');
         }
       })();
     </script>

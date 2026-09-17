@@ -14,6 +14,8 @@
 
         <div class="flex-1" />
 
+        <ApiStatusPill compact />
+
         <button
           type="button"
           class="icon-btn"
@@ -50,7 +52,7 @@
       </div>
     </header>
 
-    <main class="flex-1">
+    <main class="flex-1 flex flex-col">
       <slot />
     </main>
 
@@ -63,7 +65,7 @@
             target="_blank"
             rel="noopener noreferrer"
             class="text-brand-orange hover:underline"
-          >Mehdi Mansouri ↗</a>
+          >Saoshyant Mansouri ↗</a>
         </p>
         <router-link to="/system-design" class="hover:text-text transition-colors">
           System design &amp; architecture →
@@ -75,9 +77,11 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
+import ApiStatusPill from '../components/ApiStatusPill.vue';
 
 export default {
   name: 'PublicLayout',
+  components: { ApiStatusPill },
   computed: {
     ...mapState('ui', ['theme']),
     ...mapGetters('auth', ['isAuthenticated']),

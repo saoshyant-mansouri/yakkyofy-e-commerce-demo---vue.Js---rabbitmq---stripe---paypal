@@ -21,6 +21,11 @@ WORKDIR /repo/apps/web
 RUN npm run build
 
 FROM nginx:alpine AS runtime
+ARG API_ORIGIN="http://localhost:4000 http://127.0.0.1:4000"
 COPY apps/web/nginx.conf /etc/nginx/conf.d/default.conf
+# CSP connect-src needs the real deployed API origin baked in at build time —
+# substituted here rather than templated at container start so the CSP stays
+# a real allowlist (see apps/web/nginx.conf).
+RUN sed -i "s|__API_ORIGIN__|${API_ORIGIN}|" /etc/nginx/conf.d/default.conf
 COPY --from=build /repo/apps/web/dist /usr/share/nginx/html
 EXPOSE 80

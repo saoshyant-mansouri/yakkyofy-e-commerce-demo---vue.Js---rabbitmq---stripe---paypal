@@ -1,10 +1,8 @@
 <template>
   <div>
-    <h1 class="text-2xl font-semibold mb-6">{{ $t('cart.title') }}</h1>
-
     <ul
       v-if="loading"
-      class="flex flex-col divide-y divide-border border border-border rounded-card overflow-hidden"
+      class="card flex flex-col divide-y divide-border overflow-hidden"
       role="status"
       aria-busy="true"
       :aria-label="$t('common.loading')"
@@ -20,7 +18,7 @@
       </li>
     </ul>
 
-    <div v-else-if="items.length === 0" class="text-center py-16">
+    <div v-else-if="items.length === 0" class="card text-center py-16">
       <p class="text-text-muted mb-4">{{ $t('cart.empty') }}</p>
       <router-link to="/products" class="btn-primary">
         {{ $t('cart.browse') }}
@@ -28,7 +26,7 @@
     </div>
 
     <div v-else class="flex flex-col gap-4">
-      <ul class="flex flex-col divide-y divide-border border border-border rounded-card overflow-hidden">
+      <ul class="card flex flex-col divide-y divide-border overflow-hidden">
         <li
           v-for="item in items"
           :key="item.product._id"
@@ -37,6 +35,8 @@
           <ProductImageTile
             :icon="item.product.icon"
             :category="item.product.category"
+            :product="item.product"
+            sizes="64px"
             class="w-16 h-16 rounded-lg shrink-0"
           />
           <div class="flex-1 min-w-0">
@@ -64,7 +64,7 @@
         </li>
       </ul>
 
-      <div class="flex items-center justify-between border-t border-border pt-4">
+      <div class="card flex items-center justify-between px-5 py-4">
         <span class="text-lg font-semibold">{{ $t('cart.subtotal') }}</span>
         <span class="text-lg font-semibold">{{ formatMinor(subtotalMinor, currency) }}</span>
       </div>

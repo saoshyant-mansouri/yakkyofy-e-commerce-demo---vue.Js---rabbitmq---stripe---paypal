@@ -1,37 +1,52 @@
 <template>
-  <div class="grid lg:grid-cols-2 lg:min-h-[600px]">
-    <div class="hidden lg:flex flex-col justify-between p-12 bg-chrome border-r border-border">
+  <div class="grid lg:grid-cols-2 lg:min-h-[600px] flex-1">
+    <!-- Form first, dark hero panel on the right: the original login screen's split layout. -->
+    <div class="hidden lg:flex order-last relative overflow-hidden flex-col justify-between p-12 bg-navy text-white">
+      <div class="pointer-events-none absolute -right-24 -bottom-24 w-96 h-96 rounded-full bg-brand-orange/30 blur-3xl" aria-hidden="true" />
+      <div class="pointer-events-none absolute right-24 top-16 w-40 h-40 rounded-full bg-brand-purple/25 blur-3xl" aria-hidden="true" />
       <div>
-        <p class="text-xs uppercase tracking-widest text-brand-teal font-medium mb-4">Portfolio project</p>
-        <h2 class="text-3xl font-semibold text-text leading-tight mb-4">
+        <p class="relative text-xs uppercase tracking-widest text-brand-orange-light font-semibold mb-4">Portfolio project</p>
+        <h2 class="relative text-3xl font-semibold text-white leading-tight mb-4">
           A real checkout, built to demonstrate the craft.
         </h2>
-        <p class="text-text-secondary max-w-sm">
+        <p class="relative text-white/75 max-w-sm">
           Vue, Node.js, MongoDB, and RabbitMQ, with Stripe and PayPal wired against their sandbox APIs —
-          by Mehdi Mansouri.
+          by Saoshyant Mansouri.
         </p>
       </div>
-      <div class="flex flex-col gap-3 text-sm">
+      <div class="relative flex flex-col gap-3 text-sm">
         <a
           href="https://www.mhdmansouri.com/"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1.5 text-text-secondary hover:text-text transition-colors w-fit"
+          class="inline-flex items-center gap-1.5 text-white/75 hover:text-white transition-colors w-fit"
         >
           mhdmansouri.com
           <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H8M17 7v9" />
           </svg>
         </a>
-        <router-link to="/system-design" class="inline-flex items-center gap-1.5 text-brand-orange hover:underline w-fit">
+        <router-link to="/system-design" class="inline-flex items-center gap-1.5 text-brand-orange-light hover:underline w-fit">
           System design &amp; architecture →
         </router-link>
       </div>
     </div>
 
-    <div class="flex items-center justify-center p-6 sm:p-12">
+    <div class="flex items-center justify-center p-6 sm:p-12 bg-surface">
       <div class="w-full max-w-sm">
-        <h1 class="text-2xl font-semibold mb-6">{{ $t('auth.loginTitle') }}</h1>
+        <h1 class="text-4xl font-bold tracking-tight mb-2">Welcome back.</h1>
+        <p class="text-text-secondary mb-6">{{ $t('auth.loginTitle') }} to manage your catalogue, cart and orders.</p>
+        <ApiStatusNotice />
+        <div class="rounded-card bg-accent p-4 text-sm mb-6">
+          <p class="font-medium text-text mb-1">Demo account</p>
+          <p class="text-text-secondary">
+            <code class="text-text">demo@yakkyofy-clone.test</code> /
+            <code class="text-text">DemoPass123!</code>
+          </p>
+          <button type="button" class="text-brand-orange hover:underline mt-1" @click="fillDemoAccount">
+            Use demo account
+          </button>
+        </div>
         <form class="flex flex-col gap-4" @submit.prevent="submit">
           <label class="flex flex-col gap-1 text-sm">
             {{ $t('auth.email') }}
@@ -54,7 +69,7 @@
             />
           </label>
           <p v-if="error" class="text-brand-pink text-sm" role="alert">{{ error }}</p>
-          <button type="submit" class="btn-primary" :disabled="submitting">
+          <button type="submit" class="btn-primary w-full mt-2" :disabled="submitting">
             <Spinner v-if="submitting" size="sm" />
             {{ $t('nav.login') }}
           </button>
@@ -71,21 +86,26 @@
 <script>
 import { mapActions } from 'vuex';
 import Spinner from '../components/Spinner.vue';
+import ApiStatusNotice from '../components/ApiStatusNotice.vue';
 
 export default {
   name: 'LoginView',
-  components: { Spinner },
+  components: { Spinner, ApiStatusNotice },
   data() {
     return { email: '', password: '', error: '', submitting: false };
   },
   methods: {
     ...mapActions('auth', ['login']),
+    fillDemoAccount() {
+      this.email = 'demo@yakkyofy-clone.test';
+      this.password = 'DemoPass123!';
+    },
     async submit() {
       this.submitting = true;
       this.error = '';
       try {
         await this.login({ email: this.email, password: this.password });
-        this.$router.push(this.$route.query.redirect || '/products');
+        this.$router.push(this.$route.query.redirect || '/dashboard');
       } catch (err) {
         this.error = err.response?.data?.error || this.$t('common.error');
       } finally {
