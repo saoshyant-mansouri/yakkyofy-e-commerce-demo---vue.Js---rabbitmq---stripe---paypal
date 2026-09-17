@@ -16,17 +16,20 @@
     >
       <g v-html="ICONS[icon] || ICONS.box" />
     </svg>
+    <!-- loading/sizes/srcset come before src: Vue sets attributes in template order, and a browser
+         starts fetching as soon as src is set, before it would have seen loading="lazy". -->
     <img
       v-if="photo && !failed"
-      :src="photo.src"
-      :srcset="photo.srcset"
-      :sizes="sizes"
-      :alt="alt"
-      width="400"
-      height="400"
+      ref="img"
       :loading="eager ? 'eager' : 'lazy'"
       :fetchpriority="eager ? 'high' : 'auto'"
       decoding="async"
+      :sizes="sizes"
+      :srcset="photo.srcset"
+      :src="photo.src"
+      :alt="alt"
+      width="400"
+      height="400"
       class="product-photo absolute inset-0 w-full h-full object-cover"
       :class="loaded && 'is-loaded'"
       @load="loaded = true"
@@ -113,6 +116,9 @@ export default {
     photo() {
       return productPhotoSources(this.product);
     },
+    photoSrc() {
+      return this.photo?.src || '';
+    },
     alt() {
       return this.product?.title || '';
     },
@@ -122,9 +128,23 @@ export default {
     },
   },
   watch: {
-    photo() {
+    // Keyed on the URL string, not the `photo` object: a background refetch (returning to the
+    // catalogue) hands the same product over as a new object, and resetting `loaded` for an
+    // unchanged src would hide the photo for good, since the browser fires no second load event.
+    photoSrc() {
       this.loaded = false;
       this.failed = false;
+      this.$nextTick(this.syncLoaded);
+    },
+  },
+  mounted() {
+    this.syncLoaded();
+  },
+  methods: {
+    // An image already in the memory cache can be complete before Vue attaches @load; catch it.
+    syncLoaded() {
+      const img = this.$refs.img;
+      if (img?.complete && img.naturalWidth > 0) this.loaded = true;
     },
   },
 };
