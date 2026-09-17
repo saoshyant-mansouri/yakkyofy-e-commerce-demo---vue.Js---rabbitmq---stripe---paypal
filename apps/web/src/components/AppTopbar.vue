@@ -160,7 +160,6 @@ export default {
   methods: {
     ...mapActions('auth', ['logout']),
     ...mapActions('currency', ['setCurrency']),
-    ...mapActions('catalog', ['fetchProducts']),
     ...mapActions('cart', ['fetchCart']),
     ...mapActions('ui', ['openSidebar', 'toggleTheme']),
     onPointerDown(event) {
@@ -171,8 +170,6 @@ export default {
     },
     onCurrencyChange(event) {
       this.setCurrency(event.target.value);
-      // Only the catalogue page shows the product list; refetching it elsewhere was a wasted request.
-      if (this.$route.name === 'products') this.fetchProducts({ page: 1 });
       if (this.isAuthenticated) this.fetchCart();
     },
     async handleLogout() {

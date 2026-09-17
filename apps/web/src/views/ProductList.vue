@@ -43,11 +43,13 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapGetters, mapActions } from 'vuex';
 import ProductCard from '../components/ProductCard.vue';
 import ProductCardSkeleton from '../components/ProductCardSkeleton.vue';
 import PaginationBar from '../components/PaginationBar.vue';
 
+// Page, category and search live in the URL (?page=4&category=…&q=…), so the browser back button,
+// a reload, or a shared link all land on the same page of results.
 export default {
   name: 'ProductList',
   components: { ProductCard, ProductCardSkeleton, PaginationBar },
@@ -58,23 +60,53 @@ export default {
     };
   },
   computed: {
-    ...mapState('catalog', ['items', 'categories', 'page', 'totalPages', 'loading', 'loaded', 'limit']),
+    ...mapState('catalog', ['items', 'categories', 'page', 'totalPages', 'loading', 'limit']),
+    ...mapGetters('catalog', ['loaded']),
+    params() {
+      const { page, category, q } = this.$route.query;
+      const n = Number.parseInt(page, 10);
+      return {
+        page: Number.isInteger(n) && n > 0 ? n : 1,
+        category: typeof category === 'string' ? category : '',
+        q: typeof q === 'string' ? q : '',
+      };
+    },
+  },
+  watch: {
+    '$route.query': {
+      immediate: true,
+      handler() {
+        this.searchInput = this.params.q;
+        this.categoryInput = this.params.category;
+        this.$store.commit('catalog/SET_LAST_QUERY', { ...this.$route.query });
+        this.load();
+      },
+    },
+    '$store.state.currency.current'() {
+      this.load();
+    },
   },
   created() {
     this.fetchCategories();
-    this.fetchProducts({ page: 1 });
   },
   methods: {
-    ...mapActions('catalog', ['fetchProducts', 'fetchCategories']),
+    ...mapActions('catalog', ['loadProducts', 'fetchCategories']),
+    load() {
+      this.loadProducts(this.params).catch(() => {});
+    },
+    // Builds the query without empty values, so URLs stay clean (/products, not /products?q=&page=1).
+    navigate({ page = 1, category = this.params.category, q = this.params.q }) {
+      const query = {};
+      if (page > 1) query.page = String(page);
+      if (category) query.category = category;
+      if (q) query.q = q;
+      this.$router.push({ name: 'products', query }).catch(() => {});
+    },
     applyFilters() {
-      this.$store.commit('catalog/SET_FILTERS', {
-        query: this.searchInput,
-        category: this.categoryInput,
-      });
-      this.fetchProducts({ page: 1 });
+      this.navigate({ page: 1, category: this.categoryInput, q: this.searchInput.trim() });
     },
     goToPage(page) {
-      this.fetchProducts({ page });
+      this.navigate({ page });
     },
   },
 };

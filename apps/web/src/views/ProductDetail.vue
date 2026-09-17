@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-link
-      to="/products"
+      :to="{ name: 'products', query: $store.state.catalog.lastQuery }"
       class="inline-flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-text transition-colors mb-6"
     >
       <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -69,7 +69,10 @@ export default {
     idOrSlug: { type: String, required: true },
   },
   data() {
-    return { product: null, loading: true, adding: false };
+    // A product opened from the catalogue is already in the store: show it straight away instead of
+    // a skeleton, then refresh it from the API (for stock and price) without blanking the page.
+    const cached = this.$store.getters['catalog/findProduct'](this.idOrSlug) || null;
+    return { product: cached, loading: !cached, adding: false };
   },
   computed: {
     ...mapGetters('auth', ['isAuthenticated']),
@@ -89,14 +92,15 @@ export default {
   methods: {
     ...mapActions('cart', ['addItem']),
     async load() {
-      this.loading = true;
+      if (!this.product) this.loading = true;
       try {
         const { data } = await api.get(`/products/${this.idOrSlug}`, {
           params: { currency: this.$store.state.currency.current },
         });
         this.product = data.product;
       } catch {
-        this.product = null;
+        // Keep showing the cached product if the refresh fails; only a product we never had is "not found".
+        if (!this.product?.displayPriceMinor) this.product = null;
       } finally {
         this.loading = false;
       }

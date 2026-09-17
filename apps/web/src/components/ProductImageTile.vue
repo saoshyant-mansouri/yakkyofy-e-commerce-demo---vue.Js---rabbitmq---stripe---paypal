@@ -3,7 +3,7 @@
     class="relative flex items-center justify-center overflow-hidden"
     :style="{ background: gradient }"
   >
-    <!-- The icon tile is the placeholder while the photo loads, and the fallback if it can't. -->
+    <!-- The icon tile shows underneath until the photo paints, and stays if it fails to load. -->
     <svg
       class="w-[42%] h-[42%] text-white/90"
       viewBox="0 0 24 24"
@@ -20,7 +20,6 @@
          starts fetching as soon as src is set, before it would have seen loading="lazy". -->
     <img
       v-if="photo && !failed"
-      ref="img"
       :loading="eager ? 'eager' : 'lazy'"
       :fetchpriority="eager ? 'high' : 'auto'"
       decoding="async"
@@ -30,9 +29,7 @@
       :alt="alt"
       width="400"
       height="400"
-      class="product-photo absolute inset-0 w-full h-full object-cover"
-      :class="loaded && 'is-loaded'"
-      @load="loaded = true"
+      class="absolute inset-0 w-full h-full object-cover"
       @error="failed = true"
     />
   </div>
@@ -110,7 +107,7 @@ export default {
     eager: { type: Boolean, default: false },
   },
   data() {
-    return { ICONS, loaded: false, failed: false };
+    return { ICONS, failed: false };
   },
   computed: {
     photo() {
@@ -128,23 +125,9 @@ export default {
     },
   },
   watch: {
-    // Keyed on the URL string, not the `photo` object: a background refetch (returning to the
-    // catalogue) hands the same product over as a new object, and resetting `loaded` for an
-    // unchanged src would hide the photo for good, since the browser fires no second load event.
+    // Keyed on the URL string: a refreshed product object with the same photo must not re-trigger anything.
     photoSrc() {
-      this.loaded = false;
       this.failed = false;
-      this.$nextTick(this.syncLoaded);
-    },
-  },
-  mounted() {
-    this.syncLoaded();
-  },
-  methods: {
-    // An image already in the memory cache can be complete before Vue attaches @load; catch it.
-    syncLoaded() {
-      const img = this.$refs.img;
-      if (img?.complete && img.naturalWidth > 0) this.loaded = true;
     },
   },
 };
@@ -160,16 +143,3 @@ const CATEGORY_GRADIENTS = {
 };
 </script>
 
-<style scoped>
-/* Fade the photo in over the icon placeholder once decoded, instead of it popping in line by line. */
-.product-photo {
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-.product-photo.is-loaded {
-  opacity: 1;
-}
-@media (prefers-reduced-motion: reduce) {
-  .product-photo { transition: none; }
-}
-</style>
